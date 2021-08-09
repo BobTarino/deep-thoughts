@@ -1,4 +1,4 @@
-//represented by "0"
+//represented by "0" // main entry point 
 
 const express = require('express');
 // import ApolloServer
