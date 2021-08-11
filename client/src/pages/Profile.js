@@ -5,8 +5,8 @@ import Auth from '../utils/auth';
 
 import ThoughtList from '../components/ThoughtList';
 import FriendList from '../components/FriendList';
-
-import { useQuery } from '@apollo/client';
+import { ADD_FRIEND } from '../utils/mutations';
+import { useQuery, useMutation } from '@apollo/client';
 import { QUERY_USER, QUERY_ME } from '../utils/queries';
 
 
@@ -16,8 +16,21 @@ const Profile = () => {
   const { loading, data } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
     variables: { username: userParam }
   });
+  
 
   const user = data?.me || data?.user || {};
+
+  const [addFriend] = useMutation(ADD_FRIEND);
+
+  const handleClick = async () => {
+    try {
+      await addFriend({
+        variables: { id: user._id }
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   // redirect to personal profile page if username is the logged-in user's
   if (Auth.loggedIn() && Auth.getProfile().data.username === userParam) {
@@ -41,6 +54,11 @@ const Profile = () => {
         <h2 className="bg-dark text-secondary p-3 display-inline-block">
           Viewing {userParam ? `${user.username}'s` : 'your'} profile.
         </h2>
+        {userParam && (
+          <button className="btn ml-auto" onClick={handleClick}>
+            Add Friend
+          </button>
+)}
       </div>
 
       <div className="flex-row justify-space-between mb-3">
